@@ -1,0 +1,72 @@
+import math
+
+def Euclid(m,n):
+    divisor = n
+    q = m//n
+    r = m % n 
+    return (r,divisor,q)
+
+def GCD(a,b):
+    while True:
+        (remainder, div, dividend) = Euclid(a,b)
+        if remainder == 0:
+            break
+        else:
+            a = b
+            b = remainder
+    return div
+
+def solution (a,b,c):
+   
+    qs = []
+    while True:
+        (remainder, div, dividend) = Euclid(a,b)
+        qs.append(dividend)
+
+        if remainder == 0:
+            g = div
+            break
+        else:
+            a = b
+            b = remainder
+    
+    s = [1,0]
+    t = [0,1]
+    if c % g != 0:
+        return None
+    
+    for i , dividend in enumerate(qs):
+        s.append(s[i] - (dividend*s[i+1]))
+        t.append(t[i] - (dividend*t[i+1]))
+    (sol_x , sol_y) = (s[-2], t[-2])
+
+    scalefactor = c//g
+    (sol_x , sol_y) = (sol_x*scalefactor , sol_y*scalefactor)
+
+    return(sol_x, sol_y)
+
+print(solution(993319, 999331 , 939193))
+
+def lam(p,q):
+    lam_temp = (p-1)*(q-1)//(GCD(p-1,q-1))
+    return lam_temp
+
+def private_key(p,q,e):
+    lamda = lam(p,q)
+    (priv, temp) = solution(e,lamda,1)
+    return int(priv % lamda)
+print(f"private key is {private_key(137,173,7)}")
+
+def encrypt(n,e,m):
+    c = (m **e) % (n)
+    return c % n
+print(f"m encryped is {encrypt(137*173,7,21051)}")
+
+def decrypt(n,c,d):
+    m = (c**d) % n
+    return m % n
+print(f"m decryped is {decrypt(137*173,(encrypt(137*173,7,21051)),(private_key(137,173,7)))}")
+
+
+
+    

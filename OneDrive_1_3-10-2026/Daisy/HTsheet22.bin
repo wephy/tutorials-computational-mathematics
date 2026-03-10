@@ -1,0 +1,148 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "bcb28bf5",
+   "metadata": {
+    "vscode": {
+     "languageId": "plaintext"
+    }
+   },
+   "source": [
+    "Question 4\n",
+    "\n",
+    "Creating the function for newton's method:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cfc60233",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "def newton(F, J, x0, tol):\n",
+    "   x = np.array(x0)\n",
+    "   norm = np.linalg.norm(F(x))\n",
+    "   iteration = 0 \n",
+    "\n",
+    "   while norm > tol:\n",
+    "      delta = np.linalg.solve(J(x),-F(x))\n",
+    "      x = x + delta\n",
+    "      norm = np.linalg.norm(F(x))\n",
+    "      iteration = iteration + 1\n",
+    "   \n",
+    "   return(x, \"Iterations:\" , iteration)\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "156ce128",
+   "metadata": {},
+   "source": [
+    "Testing it out on the given function:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "727029c7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "def F(x):\n",
+    "   return np.array([x[0]**2-x[1]-1, x[0]-x[1]**2 +1])\n",
+    "\n",
+    "def J(x):\n",
+    "   return np.array([[2*x[0], -1],\n",
+    "                    [1, -2*x[1]]])\n",
+    "\n",
+    "print(newton(F, J, [1,0], 1e-10))\n",
+    "print(newton(F, J, [1,2], 1e-10))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "314e3e9b",
+   "metadata": {},
+   "source": [
+    "Question 5\n",
+    "\n",
+    "By inspection the global minimum is when x=y=1 and E=0\n",
+    "\n",
+    "Using the newton function to check this:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c263e107",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def delE(x):\n",
+    "   return np.array([2*x[0]-2-400*x[0]*(x[1]-x[0]**2),200*(x[1]-x[0]**2)])\n",
+    "\n",
+    "def Jac(x):\n",
+    "   return np.array([[2 - 400*(x[1] - 3*x[0]**2),-400*x[0]],\n",
+    "                    [-400*x[0],200]])\n",
+    "                   \n",
+    "print(newton(delE, Jac, [2,2], 1e-8))\n",
+    "print(newton(delE, Jac, [10,10], 1e-8))\n",
+    "print(newton(delE, Jac, [100,100], 1e-8))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "72585e81",
+   "metadata": {},
+   "source": [
+    "Gradient descent algorithm:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ac5b5a05",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def grad_desc(F, x0, tol, alpha):\n",
+    "   x= np.array(x0, dtype=float)\n",
+    "   norm = np.linalg.norm(F(x))\n",
+    "   iteration = 0\n",
+    "\n",
+    "   while norm > tol:\n",
+    "      x = x - (1/alpha)*F(x)\n",
+    "      norm = np.linalg.norm(F(x))\n",
+    "      iteration = iteration + 1\n",
+    "   \n",
+    "   return(x, \"Iterations:\", iteration)\n",
+    "\n",
+    "\n",
+    "print(grad_desc(delE, [2,2], 1e-8, 1000))\n",
+    "print(grad_desc(delE, [2,2], 1e-8, 500))\n",
+    "print(grad_desc(delE, [2,2], 1e-8, 2000))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4fd1d36d",
+   "metadata": {},
+   "source": [
+    "When alpha=1000, this method converges, and when alpha=2000 it converges but more slowly. \n",
+    "When aplha= 500 this method diverges "
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
